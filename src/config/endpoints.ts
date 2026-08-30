@@ -5,6 +5,7 @@ export const endpoints = (param?: string | number) => {
     login: `${baseUrl}/auth/token/`,
     refresh: `${baseUrl}/auth/token/refresh/`,
     me: `${baseUrl}/users/me/`,
+    changePassword: `${baseUrl}/users/me/change-password/`,
     list: `${baseUrl}/users/`,
     detail: `${baseUrl}/users/${param}/`,
     shopAssignments: `${baseUrl}/users/shop-assignments/`,
@@ -15,6 +16,8 @@ export const endpoints = (param?: string | number) => {
 
   const dashboard = {
     overview: `${baseUrl}/dashboard/`,
+    warehouseKeeper: `${baseUrl}/dashboard/warehouse-keeper/`,
+    salesPerson: `${baseUrl}/dashboard/sales-person/`,
   };
 
   const shops = {

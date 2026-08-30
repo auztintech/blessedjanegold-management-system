@@ -5,12 +5,15 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useUserStore } from "@/store/z-store/user";
 import {
+  Avatar, AvatarFallback, 
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+} from "@/components/ui";
+import { KeyRound } from "lucide-react";
+import { ChangePasswordSheet } from "@/components/shared/change-password-sheet";
+import { ClientOnly } from "@/components/shared/client-only";
 
 const roleLabel: Record<string, string> = {
   SUPER_ADMIN: "Super Admin",
@@ -28,6 +31,7 @@ export function Header({ onMenuClick }: HeaderProps) {
   const signOut = useUserStore((state) => state.signOut);
   const [search, setSearch] = useState("");
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+  const [changePasswordOpen, setChangePasswordOpen] = useState(false);
 
   const displayName =
     [user?.first_name, user?.last_name].filter(Boolean).join(" ") ||
@@ -78,31 +82,42 @@ export function Header({ onMenuClick }: HeaderProps) {
           <Settings size={18} />
         </button>
 
-        <DropdownMenu>
-          <DropdownMenuTrigger className="flex items-center gap-2 outline-none">
-            <Avatar className="h-9 w-9">
-              <AvatarFallback className="bg-orange-100 text-orange-600 text-sm font-medium">
-                {initials || "U"}
-              </AvatarFallback>
-            </Avatar>
-            <div className="text-left hidden md:block">
-              <p className="text-sm font-medium text-gray-800 leading-tight">
-                {displayName}
-              </p>
-              <p className="text-xs text-gray-400 leading-tight">
-                {user ? roleLabel[user.role] : ""}
-              </p>
+        <ClientOnly
+          fallback={
+            <div className="flex items-center gap-2">
+              <div className="h-9 w-9 rounded-full bg-gray-100 animate-pulse" />
             </div>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-48">
-            <DropdownMenuItem
-              onClick={handleSignOut}
-              className="text-red-500 focus:text-red-500">
-              <LogOut size={14} className="mr-2" />
-              Sign out
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+          }>
+          <DropdownMenu>
+            <DropdownMenuTrigger className="flex items-center gap-2 outline-none">
+              <Avatar className="h-9 w-9">
+                <AvatarFallback className="bg-orange-100 text-orange-600 text-sm font-medium">
+                  {initials || "U"}
+                </AvatarFallback>
+              </Avatar>
+              <div className="text-left hidden md:block">
+                <p className="text-sm font-medium text-gray-800 leading-tight">
+                  {displayName}
+                </p>
+                <p className="text-xs text-gray-400 leading-tight">
+                  {user ? roleLabel[user.role] : ""}
+                </p>
+              </div>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuItem onClick={() => setChangePasswordOpen(true)}>
+                <KeyRound size={14} className="mr-2" />
+                Change Password
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={handleSignOut}
+                className="text-red-500 focus:text-red-500">
+                <LogOut size={14} className="mr-2" />
+                Sign out
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </ClientOnly>
       </div>
 
       {mobileSearchOpen && (
@@ -119,6 +134,11 @@ export function Header({ onMenuClick }: HeaderProps) {
           </div>
         </div>
       )}
+
+      <ChangePasswordSheet
+        open={changePasswordOpen}
+        onOpenChange={setChangePasswordOpen}
+      />
     </header>
   );
 }

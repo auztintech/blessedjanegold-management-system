@@ -48,11 +48,11 @@ export const useUserStore = create<UserState>()(
         set({ user, isAuthenticated: true });
         Cookies.set(ACCESS_TOKEN_COOKIE, access, {
           ...cookieOptions,
-          expires: new Date(Date.now() + 1000 * 60 * 60 * 2), 
+          expires: new Date(Date.now() + 1000 * 60 * 60 * 2),
         });
         Cookies.set(REFRESH_TOKEN_COOKIE, refresh, {
           ...cookieOptions,
-          expires: 7, 
+          expires: 7,
         });
         Cookies.set(ROLE_COOKIE, user.role, cookieOptions);
       },
@@ -64,6 +64,6 @@ export const useUserStore = create<UserState>()(
         Cookies.remove(ROLE_COOKIE);
       },
     }),
-    { name: "app-user-store" }
+    { name: "app-user-store", skipHydration: true }
   )
 );

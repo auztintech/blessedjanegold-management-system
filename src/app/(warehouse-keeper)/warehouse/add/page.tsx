@@ -1,11 +1,20 @@
 "use client";
 
 import { useFormik } from "formik";
-import { Check, InfoIcon } from "lucide-react";
+import { Check, ChevronDown, InfoIcon } from "lucide-react";
 import {
   Button,
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
   Input,
   Label,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
   Select,
   SelectContent,
   SelectItem,
@@ -17,8 +26,11 @@ import { PleaseWaitState } from "@/components/shared/loading-button";
 import { useAddStock, useProducts } from "@/hooks/use-inventory";
 import { useWarehousesList } from "@/hooks/use-locations";
 import { addStockSchema } from "@/lib/validations/warehouse-inventory";
+import { useState } from "react";
 
 export default function AddStockPage() {
+  const [openProductList, setOpenProductList] = useState(false);
+
   const { data: warehouses } = useWarehousesList();
   const { data: products = [] } = useProducts({ is_active: true });
   const addStock = useAddStock();
@@ -89,28 +101,60 @@ export default function AddStockPage() {
 
             <div className="space-y-1.5">
               <Label>Product</Label>
-              <Select
-                value={values.product}
-                onValueChange={(value) => setFieldValue("product", value)}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select product">
-                    {
-                      products.find(
-                        (product) => String(product.id) === values.product
-                      )?.name
-                    }
-                  </SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  {products.map((product) => (
-                    <SelectItem key={product.id} value={String(product.id)}>
-                      {product.name} ({product.sku})
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+
+              <Popover open={openProductList} onOpenChange={setOpenProductList}>
+                <PopoverTrigger
+                  type="button"
+                  className="flex h-10 w-full items-center justify-between overflow-hidden rounded-lg border border-gray-200 bg-white px-3 text-sm font-normal text-gray-700 outline-none transition-colors hover:bg-gray-50">
+                  <span className="truncate">
+                    {values.product
+                      ? products.find(
+                          (product) => String(product.id) === values.product
+                        )?.name || "Select product"
+                      : "Select product"}
+                  </span>
+
+                  <ChevronDown className="h-4 w-4 shrink-0 opacity-50" />
+                </PopoverTrigger>
+
+                <PopoverContent
+                  align="start"
+                  className="w-full min-w-100 p-0">
+                  <Command className="w-full">
+                    <CommandInput placeholder="Search product..." />
+
+                    <CommandList className="w-full">
+                      <CommandEmpty>No product found.</CommandEmpty>
+
+                      <CommandGroup className="w-full">
+                        {products.map((product) => (
+                          <CommandItem
+                            key={product.id}
+                            value={`${product.name} ${product.sku}`}
+                            onSelect={() => {
+                              setFieldValue("product", String(product.id));
+
+                              setOpenProductList(false);
+                            }}>
+                            <div className="flex min-w-0 flex-col">
+                              <span className="truncate font-medium">
+                                {product.name}
+                              </span>
+
+                              <span className="text-xs text-gray-500">
+                                {product.sku}
+                              </span>
+                            </div>
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+
               {touched.product && errors.product && (
-                <p className="text-xs flex gap-1 items-center font-medium text-red-600">
+                <p className="flex items-center gap-1 text-xs font-medium text-red-600">
                   <InfoIcon className="h-3 w-3" />
                   {errors.product}
                 </p>
