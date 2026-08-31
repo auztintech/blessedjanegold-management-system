@@ -15,6 +15,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
   Input,
   Label,
@@ -303,6 +304,19 @@ function SaleActions({ sale, onView }: SaleActionsProps) {
               <Printer className="w-4 h-4 mr-2" />
               Print
             </DropdownMenuItem>
+
+            {!sale.is_reversed && (
+              <>
+                <DropdownMenuSeparator />
+
+                <DropdownMenuItem
+                  onClick={() => setReverseDialogOpen(true)}
+                  className="text-red-500 focus:text-red-500">
+                  <RotateCcw className="w-4 h-4 mr-2" />
+                  Reverse Sale
+                </DropdownMenuItem>
+              </>
+            )}
 
             {sale.is_reversed && (
               <DropdownMenuItem disabled>

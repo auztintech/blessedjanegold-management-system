@@ -19,6 +19,16 @@ export interface Sale {
   payment_method: PaymentMethod;
   total_amount: string;
   items: SaleItem[];
+
+  customer_name: string;
+  customer_phone: string;
+
+  is_reversed: boolean;
+  reversed_at: string | null;
+  reversed_by: number | null;
+  reversed_by_username: string | null;
+  reversal_reason: string | null;
+
   created_at: string;
 }
 
@@ -32,4 +42,10 @@ export interface CreateSalePayload {
   shop: number;
   payment_method: PaymentMethod;
   items: CreateSaleItemPayload[];
+  customer_name: string;
+  customer_phone: string;
+}
+
+export interface ReverseSalePayload {
+  reason: string;
 }

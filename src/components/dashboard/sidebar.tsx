@@ -53,7 +53,7 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
         <div className="flex items-center justify-between px-4 py-5 border-b border-gray-100">
           {!collapsed && (
             <span className="text-lg font-bold tracking-tight text-gray-900">
-              Inventory<span className="text-orange-500">OS</span>
+              Blessed<span className="text-orange-500">JaneGold</span>
             </span>
           )}
 

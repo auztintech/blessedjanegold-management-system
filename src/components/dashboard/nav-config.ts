@@ -46,6 +46,7 @@ const superAdminNav: NavSection[] = [
           { name: "Products", link: "/products" },
         ],
       },
+      { name: "Sales History", link: "/sales-history", icon: ClipboardList },
     ],
   },
   {

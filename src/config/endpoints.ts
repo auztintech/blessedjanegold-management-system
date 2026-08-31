@@ -49,6 +49,8 @@ export const endpoints = (param?: string | number) => {
   const sales = {
     list: `${baseUrl}/sales/`,
     detail: `${baseUrl}/sales/${param}/`,
+    reverse: `${baseUrl}/sales/${param}/reverse/`,
+    receipt: `${baseUrl}/sales/${param}/receipt/`,
   };
 
   const activityLog = {

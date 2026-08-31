@@ -18,6 +18,7 @@ export interface RecentSale {
   transaction_number: string;
   shop__name: string;
   sales_person__username: string;
+  customer_name: string;
   total_amount: string;
   created_at: string;
 }
@@ -227,6 +228,7 @@ export interface SalesPersonRecentSale {
   transaction_number: string;
   shop__name: string;
   sales_person__username: string;
+  customer_name: string;
   total_amount: string;
   created_at: string;
 }

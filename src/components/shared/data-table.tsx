@@ -23,6 +23,7 @@ import {
 
 interface CustomDataTableProps<TData> {
   data: TData[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   columns: ColumnDef<TData, any>[];
   globalFilter?: string;
   isFetching?: boolean;
@@ -46,6 +47,7 @@ export function CustomDataTable<TData>({
   const [filterValue, setFilterValue] = React.useState(globalFilter);
   const prevSelectionRef = React.useRef<TData[]>([]);
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data,
     columns,

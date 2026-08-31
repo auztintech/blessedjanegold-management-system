@@ -8,6 +8,7 @@ import { loginSchema } from "@/lib/validations/auth";
 import { useLogin } from "@/hooks/use-login";
 import { useFormik } from "formik";
 import { PleaseWaitState } from "@/components/shared/loading-button";
+import Image from "next/image";
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -34,12 +35,22 @@ export function LoginForm() {
   return (
     <div className="w-full max-w-105 mx-auto">
       {/* Logo */}
-      {/* <div className="flex items-center justify-center gap-2 mb-6">
-        <span className="text-2xl font-bold tracking-tight">Preadmin</span>
-      </div> */}
+      <div className="flex items-center justify-center gap-2 mb-6">
+        <Image
+          src="/images/favicon.png"
+          alt="Blesssed Jane Gold"
+          width={100}
+          height={100}
+          className="h-[65px] w-auto"
+        />
+      </div>
 
-      <h1 className="text-2xl font-bold text-center text-orange-500! mb-2">Welcome Back</h1>
-      <p className="text-sm mb-8 text-center font-medium">Please, sign in to your account</p>
+      <h1 className="text-2xl font-bold text-center text-orange-500! mb-2">
+        Welcome Back
+      </h1>
+      <p className="text-sm mb-8 text-center font-medium">
+        Please, sign in to your account
+      </p>
 
       <form onSubmit={handleSubmit} className="space-y-5">
         {/* username */}
@@ -58,7 +69,10 @@ export function LoginForm() {
             />
           </div>
           {touched.username && errors.username && (
-            <p className="text-xs flex gap-1 items-center font-medium text-red-600!"><InfoIcon className="h-3 w-3" />{errors.username}</p>
+            <p className="text-xs flex gap-1 items-center font-medium text-red-600!">
+              <InfoIcon className="h-3 w-3" />
+              {errors.username}
+            </p>
           )}
         </div>
 
@@ -90,7 +104,10 @@ export function LoginForm() {
             </button>
           </div>
           {touched.password && errors.password && (
-            <p className="text-xs flex gap-1 items-center font-medium text-red-600!"><InfoIcon className="h-3 w-3" />{errors.password}</p>
+            <p className="text-xs flex gap-1 items-center font-medium text-red-600!">
+              <InfoIcon className="h-3 w-3" />
+              {errors.password}
+            </p>
           )}
         </div>
 

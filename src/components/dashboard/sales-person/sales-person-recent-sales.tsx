@@ -32,6 +32,10 @@ export function SalesPersonRecentSales({ data }: SalesPersonRecentSalesProps) {
               Sales Person
             </th>
 
+            <th className="px-3 py-3 text-xs font-medium uppercase tracking-wide text-gray-400">
+              Customer Name
+            </th>
+
             <th className="px-3 py-3 text-right text-xs font-medium uppercase tracking-wide text-gray-400">
               Amount
             </th>
@@ -54,6 +58,8 @@ export function SalesPersonRecentSales({ data }: SalesPersonRecentSalesProps) {
               <td className="px-3 py-3 text-gray-600">
                 {sale.sales_person__username}
               </td>
+
+              <td className="px-3 py-3 text-gray-600">{sale.customer_name}</td>
 
               <td className="px-3 py-3 text-right font-medium text-gray-900">
                 {formatCurrency(sale.total_amount)}

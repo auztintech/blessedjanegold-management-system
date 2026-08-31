@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useFormik, FormikProvider, FieldArray } from "formik";
 import { Plus, Trash2, Check } from "lucide-react";
+
 import {
   Button,
   Input,
@@ -13,6 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui";
+
 import { createSaleSchema } from "@/lib/validations/sale";
 import { useCreateSale } from "@/hooks/use-sales";
 import { useShopStock, useProducts } from "@/hooks/use-inventory";
@@ -21,6 +23,7 @@ import { BorderedLayout } from "@/components/shared/bordered-layout";
 import { formatMNumber } from "@/lib/currency";
 import { PaymentMethod } from "@/types/sales";
 import { PleaseWaitState } from "@/components/shared/loading-button";
+import { useRouter } from "next/navigation";
 
 const paymentMethods = [
   { value: "CASH", label: "Cash" },
@@ -30,21 +33,42 @@ const paymentMethods = [
 ];
 
 export default function NewSalePage() {
+  const router = useRouter();
+
   const { data: shops } = useShopsList();
-  const { data: products } = useProducts({ is_active: true });
+  const { data: products } = useProducts({
+    is_active: true,
+  });
+
   const createSale = useCreateSale();
 
   const formik = useFormik({
     initialValues: {
       shop: "",
       payment_method: "",
-      items: [{ product: "", quantity: 1, unit_price: "" }],
+      customer_name: "",
+      customer_phone: "",
+      items: [
+        {
+          product: "",
+          quantity: 1,
+          unit_price: "",
+        },
+      ],
     },
+
     validationSchema: createSaleSchema,
+
     onSubmit: async (values, { resetForm }) => {
       await createSale.mutateAsync({
         shop: Number(values.shop),
+
         payment_method: values.payment_method as PaymentMethod,
+
+        customer_name: values.customer_name.trim(),
+
+        customer_phone: values.customer_phone.trim(),
+
         items: values.items.map((item) => ({
           product: Number(item.product),
           quantity: Number(item.quantity),
@@ -53,16 +77,18 @@ export default function NewSalePage() {
       });
 
       resetForm();
+
+      router.push("/sales/history");
     },
   });
 
   const { handleSubmit, values, errors, touched, setFieldValue } = formik;
 
-  // Auto-select the shop once available — most Sales Persons only have one
   useEffect(() => {
     if (shops && shops.length === 1 && !values.shop) {
       setFieldValue("shop", String(shops[0].id));
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shops]);
 
@@ -79,6 +105,7 @@ export default function NewSalePage() {
   const total = values.items.reduce((sum, item) => {
     const qty = Number(item.quantity) || 0;
     const price = Number(item.unit_price) || 0;
+
     return sum + qty * price;
   }, 0);
 
@@ -86,15 +113,18 @@ export default function NewSalePage() {
     <div className="space-y-4 w-full">
       <div>
         <h1 className="text-2xl font-bold text-gray-900">New Sale</h1>
+
         <p className="text-gray-500 text-sm">Record a sale for your shop</p>
       </div>
 
       <BorderedLayout>
         <FormikProvider value={formik}>
           <form onSubmit={handleSubmit} className="space-y-6 py-10 px-6">
+            {/* Shop / Payment */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <Label>Shop</Label>
+
                 <Select
                   value={values.shop}
                   onValueChange={(val) => setFieldValue("shop", val)}>
@@ -103,6 +133,7 @@ export default function NewSalePage() {
                       {shops?.find((s) => String(s.id) === values.shop)?.name}
                     </SelectValue>
                   </SelectTrigger>
+
                   <SelectContent>
                     {shops?.map((shop) => (
                       <SelectItem key={shop.id} value={String(shop.id)}>
@@ -111,6 +142,7 @@ export default function NewSalePage() {
                     ))}
                   </SelectContent>
                 </Select>
+
                 {touched.shop && errors.shop && (
                   <p className="text-xs text-red-500">
                     {errors.shop as string}
@@ -120,6 +152,7 @@ export default function NewSalePage() {
 
               <div className="space-y-1.5">
                 <Label>Payment Method</Label>
+
                 <Select
                   value={values.payment_method}
                   onValueChange={(val) => setFieldValue("payment_method", val)}>
@@ -132,6 +165,7 @@ export default function NewSalePage() {
                       }
                     </SelectValue>
                   </SelectTrigger>
+
                   <SelectContent>
                     {paymentMethods.map((pm) => (
                       <SelectItem key={pm.value} value={pm.value}>
@@ -140,6 +174,7 @@ export default function NewSalePage() {
                     ))}
                   </SelectContent>
                 </Select>
+
                 {touched.payment_method && errors.payment_method && (
                   <p className="text-xs text-red-500">
                     {errors.payment_method as string}
@@ -147,12 +182,56 @@ export default function NewSalePage() {
                 )}
               </div>
             </div>
+
+            {/* Customer */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <Label>Customer Name</Label>
+
+                <Input
+                  placeholder="Enter customer name"
+                  value={values.customer_name}
+                  onChange={(e) =>
+                    setFieldValue("customer_name", e.target.value)
+                  }
+                />
+
+                {touched.customer_name && errors.customer_name && (
+                  <p className="text-xs text-red-500">
+                    {errors.customer_name as string}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-1.5">
+                <Label>Customer Phone</Label>
+
+                <Input
+                  type="tel"
+                  placeholder="Enter customer phone"
+                  value={values.customer_phone}
+                  onChange={(e) =>
+                    setFieldValue("customer_phone", e.target.value)
+                  }
+                />
+
+                {touched.customer_phone && errors.customer_phone && (
+                  <p className="text-xs text-red-500">
+                    {errors.customer_phone as string}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* Items */}
             <FieldArray name="items">
               {({ push, remove }) => (
                 <div className="space-y-3">
                   <Label>Items</Label>
+
                   {values.items.map((item, index) => {
                     const availableQty = getAvailableQty(item.product);
+
                     const overStock =
                       availableQty !== null &&
                       Number(item.quantity) > availableQty;
@@ -163,12 +242,14 @@ export default function NewSalePage() {
                         className="flex flex-col sm:flex-row gap-3 justify-start sm:items-center border border-gray-100 rounded-lg p-3">
                         <div className="flex-1 w-full space-y-1.5">
                           <Label className="text-xs">Product</Label>
+
                           <Select
                             value={item.product}
                             onValueChange={(val) => {
                               if (!val) return;
 
                               setFieldValue(`items.${index}.product`, val);
+
                               setFieldValue(
                                 `items.${index}.unit_price`,
                                 getProductPrice(val)
@@ -183,6 +264,7 @@ export default function NewSalePage() {
                                 }
                               </SelectValue>
                             </SelectTrigger>
+
                             <SelectContent>
                               {products?.map((product) => (
                                 <SelectItem
@@ -193,6 +275,7 @@ export default function NewSalePage() {
                               ))}
                             </SelectContent>
                           </Select>
+
                           {availableQty !== null && (
                             <p className="text-xs text-gray-400">
                               {availableQty} in stock
@@ -202,6 +285,7 @@ export default function NewSalePage() {
 
                         <div className="w-full sm:w-32 space-y-1.5">
                           <Label className="text-xs">Qty</Label>
+
                           <Input
                             type="number"
                             min={1}
@@ -218,6 +302,7 @@ export default function NewSalePage() {
                                   `items.${index}.quantity`,
                                   availableQty
                                 );
+
                                 return;
                               }
 
@@ -227,6 +312,7 @@ export default function NewSalePage() {
                               );
                             }}
                           />
+
                           {overStock && (
                             <p className="text-xs text-red-500">
                               Exceeds stock
@@ -236,6 +322,7 @@ export default function NewSalePage() {
 
                         <div className="w-full sm:w-40 space-y-1.5">
                           <Label className="text-xs">Unit Price</Label>
+
                           <Input
                             value={item.unit_price}
                             onChange={(e) =>
@@ -266,7 +353,11 @@ export default function NewSalePage() {
                     size="sm"
                     className="h-10"
                     onClick={() =>
-                      push({ product: "", quantity: 1, unit_price: "" })
+                      push({
+                        product: "",
+                        quantity: 1,
+                        unit_price: "",
+                      })
                     }>
                     <Plus size={14} className="mr-1" />
                     Add Item
@@ -278,13 +369,17 @@ export default function NewSalePage() {
                 </div>
               )}
             </FieldArray>
+
+            {/* Total */}
             <div className="flex items-center justify-between border-t border-gray-100 pt-4">
               <span className="text-gray-600 font-medium">Total</span>
+
               <span className="text-xl font-bold text-gray-900">
                 {formatMNumber(total)}
               </span>
             </div>
 
+            {/* Submit */}
             <div className="flex justify-end pt-4 border-t border-gray-100">
               <Button
                 type="submit"

@@ -9,7 +9,7 @@ const jakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Inventory Management System",
+  title: "Blesssed Jane Gold",
   description: "Manage your inventory efficiently",
 };
 
