@@ -55,5 +55,18 @@ export const endpoints = (param?: string | number) => {
     list: `${baseUrl}/activity-log/`,
   };
 
-  return { user, dashboard, shops, warehouses, inventory, sales, activityLog };
+  const reports = {
+    summary: `${baseUrl}/reports/summary/`,
+  };
+
+  return {
+    user,
+    dashboard,
+    shops,
+    warehouses,
+    inventory,
+    sales,
+    activityLog,
+    reports,
+  };
 };
