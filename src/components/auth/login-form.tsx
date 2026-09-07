@@ -41,7 +41,7 @@ export function LoginForm() {
           alt="Blesssed Jane Gold"
           width={100}
           height={100}
-          className="h-[65px] w-auto"
+          className="h-16.25 w-auto"
         />
       </div>
 

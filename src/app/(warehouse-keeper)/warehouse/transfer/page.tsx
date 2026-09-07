@@ -171,8 +171,8 @@ export default function TransferStockPage() {
                 </PopoverTrigger>
 
                 <PopoverContent
-                  align="start"
-                  className="w-full min-w-100 p-0">
+                              align="start"
+                              className="w-full">
                   <Command className="w-full">
                     <CommandInput placeholder="Search product..." />
 

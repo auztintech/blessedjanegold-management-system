@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useFormik, FormikProvider, FieldArray } from "formik";
-import { Plus, Trash2, Check } from "lucide-react";
-
+import { Plus, Trash2, Check, ChevronDown } from "lucide-react";
 import {
   Button,
   Input,
@@ -13,6 +12,15 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
 } from "@/components/ui";
 
 import { createSaleSchema } from "@/lib/validations/sale";
@@ -34,6 +42,7 @@ const paymentMethods = [
 
 export default function NewSalePage() {
   const router = useRouter();
+  const [openProductList, setOpenProductList] = useState<number | null>(null);
 
   const { data: shops } = useShopsList();
   const { data: products } = useProducts({
@@ -243,38 +252,71 @@ export default function NewSalePage() {
                         <div className="flex-1 w-full space-y-1.5">
                           <Label className="text-xs">Product</Label>
 
-                          <Select
-                            value={item.product}
-                            onValueChange={(val) => {
-                              if (!val) return;
-
-                              setFieldValue(`items.${index}.product`, val);
-
-                              setFieldValue(
-                                `items.${index}.unit_price`,
-                                getProductPrice(val)
-                              );
+                          <Popover
+                            open={openProductList === index}
+                            onOpenChange={(open) => {
+                              setOpenProductList(open ? index : null);
                             }}>
-                            <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Select product">
-                                {
-                                  products?.find(
-                                    (p) => String(p.id) === item.product
-                                  )?.name
-                                }
-                              </SelectValue>
-                            </SelectTrigger>
+                            <PopoverTrigger
+                              type="button"
+                              className="flex h-10 w-full items-center justify-between overflow-hidden rounded-lg border border-gray-200 bg-white px-3 text-sm font-normal text-gray-700 outline-none transition-colors hover:bg-gray-50 focus:ring-2 focus:ring-orange-500 focus:ring-offset-1">
+                              <span className="truncate">
+                                {item.product
+                                  ? products?.find(
+                                      (product) =>
+                                        String(product.id) === item.product
+                                    )?.name || "Select product"
+                                  : "Select product"}
+                              </span>
 
-                            <SelectContent>
-                              {products?.map((product) => (
-                                <SelectItem
-                                  key={product.id}
-                                  value={String(product.id)}>
-                                  {product.name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                              <ChevronDown className="h-4 w-4 shrink-0 opacity-50" />
+                            </PopoverTrigger>
+
+                            <PopoverContent
+                              align="start"
+                              className="w-full">
+                              <Command className="w-full">
+                                <CommandInput placeholder="Search product..." />
+
+                                <CommandList className="w-full">
+                                  <CommandEmpty>No product found.</CommandEmpty>
+
+                                  <CommandGroup className="w-full">
+                                    {products?.map((product) => (
+                                      <CommandItem
+                                        key={product.id}
+                                        value={`${product.name} ${product.sku}`}
+                                        onSelect={() => {
+                                          const value = String(product.id);
+
+                                          setFieldValue(
+                                            `items.${index}.product`,
+                                            value
+                                          );
+
+                                          setFieldValue(
+                                            `items.${index}.unit_price`,
+                                            getProductPrice(value)
+                                          );
+
+                                          setOpenProductList(null);
+                                        }}>
+                                        <div className="flex min-w-0 flex-col">
+                                          <span className="truncate font-medium">
+                                            {product.name}
+                                          </span>
+
+                                          <span className="text-xs text-gray-500">
+                                            {product.sku}
+                                          </span>
+                                        </div>
+                                      </CommandItem>
+                                    ))}
+                                  </CommandGroup>
+                                </CommandList>
+                              </Command>
+                            </PopoverContent>
+                          </Popover>
 
                           {availableQty !== null && (
                             <p className="text-xs text-gray-400">

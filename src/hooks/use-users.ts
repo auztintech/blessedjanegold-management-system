@@ -107,3 +107,18 @@ export function useUpdateUser() {
     },
   });
 }
+
+export function useUsersByRole(role: Role) {
+  return useQuery({
+    queryKey: ["users-by-role", role],
+    queryFn: async () => {
+      const { data } = await instance.get<PaginatedResponse<User>>(
+        endpoints().user.list,
+        {
+          params: { role },
+        }
+      );
+      return data.results;
+    },
+  });
+}

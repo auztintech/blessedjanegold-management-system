@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { MoreHorizontal, Pencil, Trash2, Users } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -22,11 +22,13 @@ import { Warehouse } from "@/types/location";
 interface GetWarehouseColumnsProps {
   onEdit: (warehouse: Warehouse) => void;
   onDelete: (id: number) => void;
+  onManageAssignments: (warehouse: Warehouse) => void;
 }
 
 export function getWarehouseColumns({
   onEdit,
   onDelete,
+  onManageAssignments,
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 }: GetWarehouseColumnsProps): ColumnDef<Warehouse, any>[] {
   return [
@@ -55,12 +57,12 @@ export function getWarehouseColumns({
       enableHiding: false,
       cell: ({ row }) => {
         const warehouse = row.original;
-
         return (
           <WarehouseActions
             warehouse={warehouse}
             onEdit={onEdit}
             onDelete={onDelete}
+            onManageAssignments={onManageAssignments}
           />
         );
       },
@@ -72,12 +74,14 @@ interface WarehouseActionsProps {
   warehouse: Warehouse;
   onEdit: (warehouse: Warehouse) => void;
   onDelete: (id: number) => void;
+  onManageAssignments: (warehouse: Warehouse) => void;
 }
 
 function WarehouseActions({
   warehouse,
   onEdit,
   onDelete,
+  onManageAssignments,
 }: WarehouseActionsProps) {
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -95,7 +99,12 @@ function WarehouseActions({
           </span>
         </DropdownMenuTrigger>
 
-        <DropdownMenuContent align="end">
+        <DropdownMenuContent align="end" className="w-auto whitespace-nowrap">
+          <DropdownMenuItem onClick={() => onManageAssignments(warehouse)}>
+            <Users className="w-4 h-4 mr-2" />
+            Manage Assignments
+          </DropdownMenuItem>
+
           <DropdownMenuItem onClick={() => onEdit(warehouse)}>
             <Pencil className="w-4 h-4 mr-2" />
             Edit
@@ -114,7 +123,6 @@ function WarehouseActions({
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Delete Warehouse?</DialogTitle>
-
             <DialogDescription>
               Are you sure you want to delete{" "}
               <span className="font-semibold text-gray-900">
@@ -131,7 +139,6 @@ function WarehouseActions({
               onClick={() => setDialogOpen(false)}>
               Cancel
             </Button>
-
             <Button
               type="button"
               onClick={handleDelete}

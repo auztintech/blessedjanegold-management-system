@@ -5,6 +5,7 @@ import { Plus, Search } from "lucide-react";
 import { Button, Input } from "@/components/ui";
 import { useWarehouses, useDeleteWarehouse } from "@/hooks/use-warehouses";
 import { WarehouseFormSheet } from "@/components/warehouse/warehouse-form-sheet";
+import { WarehouseAssignmentsDialog } from "@/components/warehouse/warehouse-assignments-dialog";
 import { getWarehouseColumns } from "@/components/warehouse/warehouse-columns";
 import { CustomDataTable } from "@/components/shared/data-table";
 import { BorderedLayout } from "@/components/shared/bordered-layout";
@@ -17,6 +18,8 @@ export default function WarehousesPage() {
   const [editingWarehouse, setEditingWarehouse] = useState<Warehouse | null>(
     null
   );
+  const [assignmentsWarehouse, setAssignmentsWarehouse] =
+    useState<Warehouse | null>(null);
 
   const { data, isLoading } = useWarehouses(page, search);
   const deleteWarehouse = useDeleteWarehouse();
@@ -27,6 +30,7 @@ export default function WarehousesPage() {
       setSheetOpen(true);
     },
     onDelete: (id) => deleteWarehouse.mutate(id),
+    onManageAssignments: (warehouse) => setAssignmentsWarehouse(warehouse),
   });
 
   const handleAddNew = () => {
@@ -98,6 +102,12 @@ export default function WarehousesPage() {
         open={sheetOpen}
         onOpenChange={setSheetOpen}
         warehouse={editingWarehouse}
+      />
+
+      <WarehouseAssignmentsDialog
+        open={!!assignmentsWarehouse}
+        onOpenChange={(open) => !open && setAssignmentsWarehouse(null)}
+        warehouse={assignmentsWarehouse}
       />
     </div>
   );

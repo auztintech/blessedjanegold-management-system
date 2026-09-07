@@ -117,9 +117,7 @@ export default function AddStockPage() {
                   <ChevronDown className="h-4 w-4 shrink-0 opacity-50" />
                 </PopoverTrigger>
 
-                <PopoverContent
-                  align="start"
-                  className="w-full min-w-100 p-0">
+                <PopoverContent align="start" className="w-full">
                   <Command className="w-full">
                     <CommandInput placeholder="Search product..." />
 

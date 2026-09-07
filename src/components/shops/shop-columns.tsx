@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { MoreHorizontal, Pencil, Trash2, Users } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -22,18 +22,18 @@ import { Shop } from "@/types/location";
 interface GetShopColumnsProps {
   onEdit: (shop: Shop) => void;
   onDelete: (id: number) => void;
+  onManageAssignments: (shop: Shop) => void;
 }
 
 export function getShopColumns({
   onEdit,
   onDelete,
-}: // eslint-disable-next-line @typescript-eslint/no-explicit-any
-GetShopColumnsProps): ColumnDef<Shop, any>[] {
+  onManageAssignments,
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+}: GetShopColumnsProps): ColumnDef<Shop, any>[] {
   return [
     { accessorKey: "name", header: "Shop Name" },
-
     { accessorKey: "location", header: "Location" },
-
     {
       accessorKey: "is_active",
       header: "Status",
@@ -41,7 +41,6 @@ GetShopColumnsProps): ColumnDef<Shop, any>[] {
         <StatusBadge status={row.original.is_active ? "active" : "inactive"} />
       ),
     },
-
     {
       accessorKey: "created_at",
       header: "Created On",
@@ -52,15 +51,20 @@ GetShopColumnsProps): ColumnDef<Shop, any>[] {
           year: "numeric",
         }),
     },
-
     {
       id: "actions",
       header: "Actions",
       enableHiding: false,
       cell: ({ row }) => {
         const shop = row.original;
-
-        return <ShopActions shop={shop} onEdit={onEdit} onDelete={onDelete} />;
+        return (
+          <ShopActions
+            shop={shop}
+            onEdit={onEdit}
+            onDelete={onDelete}
+            onManageAssignments={onManageAssignments}
+          />
+        );
       },
     },
   ];
@@ -70,9 +74,15 @@ interface ShopActionsProps {
   shop: Shop;
   onEdit: (shop: Shop) => void;
   onDelete: (id: number) => void;
+  onManageAssignments: (shop: Shop) => void;
 }
 
-function ShopActions({ shop, onEdit, onDelete }: ShopActionsProps) {
+function ShopActions({
+  shop,
+  onEdit,
+  onDelete,
+  onManageAssignments,
+}: ShopActionsProps) {
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const handleDelete = () => {
@@ -89,7 +99,12 @@ function ShopActions({ shop, onEdit, onDelete }: ShopActionsProps) {
           </span>
         </DropdownMenuTrigger>
 
-        <DropdownMenuContent align="end">
+        <DropdownMenuContent align="end" className="w-auto whitespace-nowrap">
+          <DropdownMenuItem onClick={() => onManageAssignments(shop)}>
+            <Users className="w-4 h-4 mr-2" />
+            Manage Assignments
+          </DropdownMenuItem>
+
           <DropdownMenuItem onClick={() => onEdit(shop)}>
             <Pencil className="w-4 h-4 mr-2" />
             Edit
@@ -108,7 +123,6 @@ function ShopActions({ shop, onEdit, onDelete }: ShopActionsProps) {
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Delete Shop?</DialogTitle>
-
             <DialogDescription>
               Are you sure you want to delete{" "}
               <span className="font-semibold text-gray-900">{shop.name}</span>?
@@ -123,7 +137,6 @@ function ShopActions({ shop, onEdit, onDelete }: ShopActionsProps) {
               onClick={() => setDialogOpen(false)}>
               Cancel
             </Button>
-
             <Button
               type="button"
               onClick={handleDelete}

@@ -5,6 +5,7 @@ import { Plus, Search } from "lucide-react";
 import { Button, Input } from "@/components/ui";
 import { useShops, useDeleteShop } from "@/hooks/use-shops";
 import { ShopFormSheet } from "@/components/shops/shop-form-sheet";
+import { ShopAssignmentsDialog } from "@/components/shops/shop-assignments-dialog";
 import { getShopColumns } from "@/components/shops/shop-columns";
 import { CustomDataTable } from "@/components/shared/data-table";
 import { BorderedLayout } from "@/components/shared/bordered-layout";
@@ -15,6 +16,7 @@ export default function ShopsPage() {
   const [search, setSearch] = useState("");
   const [sheetOpen, setSheetOpen] = useState(false);
   const [editingShop, setEditingShop] = useState<Shop | null>(null);
+  const [assignmentsShop, setAssignmentsShop] = useState<Shop | null>(null);
 
   const { data, isLoading } = useShops(page, search);
   const deleteShop = useDeleteShop();
@@ -25,6 +27,7 @@ export default function ShopsPage() {
       setSheetOpen(true);
     },
     onDelete: (id) => deleteShop.mutate(id),
+    onManageAssignments: (shop) => setAssignmentsShop(shop),
   });
 
   const handleAddNew = () => {
@@ -94,6 +97,12 @@ export default function ShopsPage() {
         open={sheetOpen}
         onOpenChange={setSheetOpen}
         shop={editingShop}
+      />
+
+      <ShopAssignmentsDialog
+        open={!!assignmentsShop}
+        onOpenChange={(open) => !open && setAssignmentsShop(null)}
+        shop={assignmentsShop}
       />
     </div>
   );
