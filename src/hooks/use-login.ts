@@ -30,39 +30,20 @@ export function useLogin() {
 
   return useMutation({
     mutationFn: async (payload: LoginPayload) => {
-      const loginUrl = endpoints().user.login;
-
-      console.log("========== LOGIN DEBUG ==========");
-      console.log("API URL:", process.env.NEXT_PUBLIC_API_URL);
-      console.log("LOGIN URL:", loginUrl);
-      console.log("=================================");
-
+      // Step 1: authenticate — returns tokens only, no user data
       const { data: tokens } = await instance.post<TokenResponse>(
-        loginUrl,
+        endpoints().user.login,
         payload
       );
 
+      // Step 2: fetch the actual profile using the fresh access token.
+      // Passed explicitly here since the cookie isn't set yet at this point.
       const { data: user } = await instance.get<User>(endpoints().user.me, {
         headers: { Authorization: `Bearer ${tokens.access}` },
       });
 
       return { user, ...tokens };
     },
-    // mutationFn: async (payload: LoginPayload) => {
-    //   // Step 1: authenticate — returns tokens only, no user data
-    //   const { data: tokens } = await instance.post<TokenResponse>(
-    //     endpoints().user.login,
-    //     payload
-    //   );
-
-    //   // Step 2: fetch the actual profile using the fresh access token.
-    //   // Passed explicitly here since the cookie isn't set yet at this point.
-    //   const { data: user } = await instance.get<User>(endpoints().user.me, {
-    //     headers: { Authorization: `Bearer ${tokens.access}` },
-    //   });
-
-    //   return { user, ...tokens };
-    // },
     onSuccess: ({ user, access, refresh }) => {
       signIn({ user, access, refresh });
       const displayName =
