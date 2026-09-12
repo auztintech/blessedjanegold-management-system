@@ -44,31 +44,15 @@ export function useLogin() {
 
       return { user, ...tokens };
     },
-    // onSuccess: ({ user, access, refresh }) => {
-    //   signIn({ user, access, refresh });
-    //   const displayName =
-    //     [user.first_name, user.last_name].filter(Boolean).join(" ") ||
-    //     user.username;
-    //   toast.success(`Welcome back, ${displayName}`);
-    //   router.push(roleRedirects[user.role] ?? "/auth/login");
-    // },
     onSuccess: ({ user, access, refresh }) => {
-      console.log("========== LOGIN SUCCESS ==========");
-      console.log("USER:", user);
-      console.log("USER ROLE:", user.role);
-      console.log("REDIRECT:", roleRedirects[user.role] ?? "/auth/login");
-      console.log("===================================");
-
       signIn({ user, access, refresh });
-
       const displayName =
         [user.first_name, user.last_name].filter(Boolean).join(" ") ||
         user.username;
-
       toast.success(`Welcome back, ${displayName}`);
-
       router.push(roleRedirects[user.role] ?? "/auth/login");
     },
+    
     onError: (error: AxiosError<{ detail?: string; message?: string }>) => {
       const message =
         error?.response?.data?.detail ||
