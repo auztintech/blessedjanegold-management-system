@@ -92,7 +92,7 @@ export default function SalesHistoryPage() {
           }
 
           return (
-            <div className="min-w-[180px] max-w-[260px]">
+            <div className="min-w-45 max-w-65">
               <div className="space-y-1">
                 {items.map((item) => (
                   <div
@@ -551,7 +551,7 @@ function SaleDetailField({ label, value }: SaleDetailFieldProps) {
   return (
     <div className="rounded-lg border border-gray-100 bg-gray-50/50 p-3">
       <p className="text-xs font-medium text-gray-500 mb-1">{label}</p>
-      <p className="text-sm font-medium text-gray-900 break-words">
+      <p className="text-sm font-medium text-gray-900 wrap-break-word">
         {value || "—"}
       </p>
     </div>

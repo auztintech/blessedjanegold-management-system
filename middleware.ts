@@ -17,11 +17,14 @@ const roleRoutePrefixes: Record<Role, string[]> = {
     "/dashboard",
     "/shops",
     "/warehouses",
+    "/categories",    
     "/products",
     "/users",
     "/reports",
     "/activity-log",
+    "/sales-history", 
   ],
+
   SALES_PERSON: ["/sales"],
   WAREHOUSE_KEEPER: ["/warehouse"],
 };
