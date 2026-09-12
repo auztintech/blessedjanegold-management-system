@@ -37,7 +37,7 @@ export function LoginForm() {
       {/* Logo */}
       <div className="flex items-center justify-center gap-2 mb-6">
         <Image
-          src="/images/favicon.png"
+          src="/images/logo.png"
           alt="Blesssed Jane Gold"
           width={100}
           height={100}
