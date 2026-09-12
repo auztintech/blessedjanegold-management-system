@@ -117,7 +117,7 @@ export function SalesByShopChart({ data }: SalesByShopChartProps) {
 
   if (!data.length) {
     return (
-      <div className="flex h-[280px] items-center justify-center rounded-lg bg-gray-50">
+      <div className="flex h-70 items-center justify-center rounded-lg bg-gray-50">
         <p className="text-sm text-gray-400">No shop sales data available.</p>
       </div>
     );

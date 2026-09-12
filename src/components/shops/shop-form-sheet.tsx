@@ -64,7 +64,7 @@ export function ShopFormSheet({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="overflow-y-auto w-full sm:max-w-md">
+      <SheetContent className="overflow-y-auto">
         <SheetHeader className="border-b border-gray-100 pb-4">
           <SheetTitle className="flex items-center gap-2 text-lg font-bold text-gray-900">
             {isEditMode ? (
