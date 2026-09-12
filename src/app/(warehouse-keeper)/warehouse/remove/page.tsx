@@ -173,26 +173,33 @@ export default function RemoveStockPage() {
                       <CommandEmpty>No product found.</CommandEmpty>
 
                       <CommandGroup className="w-full">
-                        {products.map((product) => (
-                          <CommandItem
-                            key={product.id}
-                            value={`${product.name} ${product.sku}`}
-                            onSelect={() => {
-                              setFieldValue("product", String(product.id));
+                        {products.map((product) => {
+                          const productStock =
+                            stockData?.results.find(
+                              (stock) =>
+                                String(stock.product) === String(product.id)
+                            )?.quantity ?? 0;
 
-                              setOpenProductList(false);
-                            }}>
-                            <div className="flex min-w-0 flex-col">
-                              <span className="truncate font-medium">
-                                {product.name}
-                              </span>
+                          return (
+                            <CommandItem
+                              key={product.id}
+                              value={`${product.name} ${product.sku}`}
+                              onSelect={() => {
+                                setFieldValue("product", String(product.id));
+                                setOpenProductList(false);
+                              }}>
+                              <div className="flex min-w-0 flex-col">
+                                <span className="truncate font-medium">
+                                  {product.name}
+                                </span>
 
-                              <span className="text-xs text-gray-500">
-                                {product.sku}
-                              </span>
-                            </div>
-                          </CommandItem>
-                        ))}
+                                <span className="text-xs text-gray-500">
+                                  In Stock: {productStock}
+                                </span>
+                              </div>
+                            </CommandItem>
+                          );
+                        })}
                       </CommandGroup>
                     </CommandList>
                   </Command>

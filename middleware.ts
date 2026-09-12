@@ -16,7 +16,9 @@ const roleRoutePrefixes: Record<Role, string[]> = {
   SUPER_ADMIN: [
     "/dashboard",
     "/shops",
+    "/shop-stock",
     "/warehouses",
+    "/warehouse-stock",
     "/categories",    
     "/products",
     "/users",

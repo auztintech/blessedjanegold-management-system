@@ -71,11 +71,8 @@ export default function NewSalePage() {
     onSubmit: async (values, { resetForm }) => {
       await createSale.mutateAsync({
         shop: Number(values.shop),
-
         payment_method: values.payment_method as PaymentMethod,
-
         customer_name: values.customer_name.trim(),
-
         customer_phone: values.customer_phone.trim(),
 
         items: values.items.map((item) => ({
@@ -272,9 +269,7 @@ export default function NewSalePage() {
                               <ChevronDown className="h-4 w-4 shrink-0 opacity-50" />
                             </PopoverTrigger>
 
-                            <PopoverContent
-                              align="start"
-                              className="w-full">
+                            <PopoverContent align="start" className="w-full">
                               <Command className="w-full">
                                 <CommandInput placeholder="Search product..." />
 
@@ -282,36 +277,45 @@ export default function NewSalePage() {
                                   <CommandEmpty>No product found.</CommandEmpty>
 
                                   <CommandGroup className="w-full">
-                                    {products?.map((product) => (
-                                      <CommandItem
-                                        key={product.id}
-                                        value={`${product.name} ${product.sku}`}
-                                        onSelect={() => {
-                                          const value = String(product.id);
+                                    {products?.map((product) => {
+                                      const productStock =
+                                        shopStock?.find(
+                                          (stock) =>
+                                            String(stock.product) ===
+                                            String(product.id)
+                                        )?.quantity ?? 0;
 
-                                          setFieldValue(
-                                            `items.${index}.product`,
-                                            value
-                                          );
+                                      return (
+                                        <CommandItem
+                                          key={product.id}
+                                          value={`${product.name} ${product.sku}`}
+                                          onSelect={() => {
+                                            const value = String(product.id);
 
-                                          setFieldValue(
-                                            `items.${index}.unit_price`,
-                                            getProductPrice(value)
-                                          );
+                                            setFieldValue(
+                                              `items.${index}.product`,
+                                              value
+                                            );
 
-                                          setOpenProductList(null);
-                                        }}>
-                                        <div className="flex min-w-0 flex-col">
-                                          <span className="truncate font-medium">
-                                            {product.name}
-                                          </span>
+                                            setFieldValue(
+                                              `items.${index}.unit_price`,
+                                              getProductPrice(value)
+                                            );
 
-                                          <span className="text-xs text-gray-500">
-                                            {product.sku}
-                                          </span>
-                                        </div>
-                                      </CommandItem>
-                                    ))}
+                                            setOpenProductList(null);
+                                          }}>
+                                          <div className="flex min-w-0 flex-col">
+                                            <span className="truncate font-medium">
+                                              {product.name}
+                                            </span>
+
+                                            <span className="text-xs text-gray-500">
+                                              In Stock: {productStock}
+                                            </span>
+                                          </div>
+                                        </CommandItem>
+                                      );
+                                    })}
                                   </CommandGroup>
                                 </CommandList>
                               </Command>

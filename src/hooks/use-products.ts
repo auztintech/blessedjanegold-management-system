@@ -9,10 +9,16 @@ import { PaginatedResponse } from "@/types/api";
 import { Product, ProductPayload } from "@/types/inventory";
 
 export function useProducts(
-  filters: { category?: number; is_active?: boolean } = {}
+  filters: {
+    category?: number;
+    is_active?: boolean;
+    page?: number;
+    search?: string;
+  } = {}
 ) {
   return useQuery({
     queryKey: ["products-list", filters],
+
     queryFn: async () => {
       const { data } = await instance.get<PaginatedResponse<Product>>(
         endpoints().inventory.products,
@@ -20,7 +26,8 @@ export function useProducts(
           params: filters,
         }
       );
-      return data.results;
+
+      return data;
     },
   });
 }
@@ -47,12 +54,15 @@ export function useCreateProduct() {
         endpoints().inventory.products,
         payload
       );
+
       return data;
     },
+
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({ queryKey: ["products-list"] });
       toast.success("Product created successfully");
     },
+
     onError: (error: AxiosError<Record<string, string[] | string>>) =>
       handleMutationError(error, "Failed to create product"),
   });
@@ -73,12 +83,15 @@ export function useUpdateProduct() {
         endpoints(id).inventory.productDetail,
         payload
       );
+
       return data;
     },
+
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({ queryKey: ["products-list"] });
       toast.success("Product updated successfully");
     },
+
     onError: (error: AxiosError<Record<string, string[] | string>>) =>
       handleMutationError(error, "Failed to update product"),
   });
@@ -91,10 +104,12 @@ export function useDeleteProduct() {
     mutationFn: async (id: number) => {
       await instance.delete(endpoints(id).inventory.productDetail);
     },
+
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({ queryKey: ["products-list"] });
       toast.success("Product removed");
     },
+
     onError: () => toast.error("Failed to remove product"),
   });
 }

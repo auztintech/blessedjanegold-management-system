@@ -35,8 +35,24 @@ const superAdminNav: NavSection[] = [
   {
     section: "Management",
     items: [
-      { name: "Shops", link: "/shops", icon: Store },
-      { name: "Warehouses", link: "/warehouses", icon: Warehouse },
+      {
+        name: "Shops",
+        icon: Store,
+        link: "",
+        dropdownItems: [
+          { name: "All Shops", link: "/shops" },
+          { name: "Shop Stock", link: "/shop-stock" },
+        ],
+      },
+      {
+        name: "Warehouses",
+        icon: Warehouse,
+        link: "",
+        dropdownItems: [
+          { name: "All Warehouses", link: "/warehouses" },
+          { name: "Warehouse Stock", link: "/warehouse-stock" },
+        ],
+      },
       {
         name: "Inventory",
         link: "",

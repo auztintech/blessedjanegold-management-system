@@ -11,11 +11,15 @@ import { BorderedLayout } from "@/components/shared/bordered-layout";
 import { Product } from "@/types/inventory";
 
 export default function ProductsPage() {
-  const [search, setSearch] = useState("");
   const [sheetOpen, setSheetOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
-  const { data: products, isLoading } = useProducts({
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
+
+  const { data, isLoading } = useProducts({
+    page,
+    search,
     is_active: true,
   });
 
@@ -33,11 +37,6 @@ export default function ProductsPage() {
     setEditingProduct(null);
     setSheetOpen(true);
   };
-
-  const filteredProducts =
-    products?.filter((product) =>
-      product.name.toLowerCase().includes(search.toLowerCase())
-    ) ?? [];
 
   return (
     <div className="space-y-4">
@@ -63,19 +62,46 @@ export default function ProductsPage() {
             <Input
               placeholder="Search products..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(1);
+              }}
               className="pl-9"
             />
           </div>
 
           <CustomDataTable
-            data={filteredProducts}
+            data={data?.results ?? []}
             columns={columns}
             isFetching={isLoading}
             getRowId={(row: Product) => String(row.id)}
           />
         </div>
       </BorderedLayout>
+
+      {data && data.count > 0 && (
+        <div className="flex items-center justify-between text-sm text-gray-500">
+          <span>{data.count} total products</span>
+
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={!data.previous}
+              onClick={() => setPage((p) => p - 1)}>
+              Previous
+            </Button>
+
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={!data.next}
+              onClick={() => setPage((p) => p + 1)}>
+              Next
+            </Button>
+          </div>
+        </div>
+      )}
 
       <ProductFormSheet
         open={sheetOpen}
